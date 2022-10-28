@@ -7,23 +7,26 @@ import {
 Deno.test({
 	name: "basics",
 	fn: async () => {
-		const { isTypeError, isNotTypeError, cleanUp } = await TypeAsserter({
+		const { isTypeError, cleanUp } = await TypeAsserter({
 			currentModUrl: import.meta.url,
 		});
 
-		await isTypeError(`
-            const x: number = "not a number";
-        `).then(assert);
+		try {
 
-		await isNotTypeError(`
-            const x: number = "not a number";
-        `).then(assertFalse);
+			await isTypeError(`
+				const x: number = "not a number";
+			`).then(assert);
 
-		await isTypeError(`
-            import { fn } from "./dummy_fn.ts";
-            fn("hello");
-        `).then(assert);
+			await isTypeError(`
+				import { fn } from "./dummy_fn.ts";
+				fn("hello");
+			`).then(assertFalse);
 
-		await cleanUp();
+		} finally {
+
+			await cleanUp();
+
+		}
 	},
+	
 });
